@@ -19,6 +19,7 @@ class ViewController: UIViewController {
   
   var videoFilter: CoreImageVideoFilter?
   var detector: CIDetector?
+  var currentFilteredImage: CIImage?
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -31,7 +32,7 @@ class ViewController: UIViewController {
     handleDetectorSelectionChange(0)
   }
   
-    func handleDetectorSelectionChange(_ selectedIndex: Int) {
+  func handleDetectorSelectionChange(_ selectedIndex: Int) {
     if let videoFilter = videoFilter {
       videoFilter.stopFiltering()
       switch selectedIndex {
@@ -39,7 +40,8 @@ class ViewController: UIViewController {
         detector = prepareRectangleDetector()
         videoFilter.applyFilter = {
           image in
-          return self.performRectangleDetection(image)
+          self.performRectangleDetection(image)
+          return self.currentFilteredImage
         }
       default:
         videoFilter.applyFilter = nil
@@ -50,17 +52,19 @@ class ViewController: UIViewController {
   
   
   //MARK: Utility methods
-  func performRectangleDetection(_ image: CIImage) -> CIImage? {
-    var resultImage: CIImage?
+  func performRectangleDetection(_ image: CIImage) -> Void {
     if let detector = detector {
       // Get the detections
       let features = detector.features(in: image)
       for feature in features as! [CIRectangleFeature] {
-        resultImage = drawHighlightOverlayForPoints(image, topLeft: feature.topLeft, topRight: feature.topRight,
-                                                    bottomLeft: feature.bottomLeft, bottomRight: feature.bottomRight)
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+          self.currentFilteredImage = self.drawHighlightOverlayForPoints(image, topLeft: feature.topLeft, topRight: feature.topRight,
+                  bottomLeft: feature.bottomLeft, bottomRight: feature.bottomRight)
+          print("Height \(feature.topLeft.y - feature.bottomLeft.y)")
+          print("Width \(feature.topRight.x - feature.topLeft.x)")
+        })
       }
     }
-    return resultImage
   }
   
   func prepareRectangleDetector() -> CIDetector {
