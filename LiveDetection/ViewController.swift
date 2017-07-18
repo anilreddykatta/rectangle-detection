@@ -57,12 +57,10 @@ class ViewController: UIViewController {
       // Get the detections
       let features = detector.features(in: image)
       for feature in features as! [CIRectangleFeature] {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
-          self.currentFilteredImage = self.drawHighlightOverlayForPoints(image, topLeft: feature.topLeft, topRight: feature.topRight,
-                  bottomLeft: feature.bottomLeft, bottomRight: feature.bottomRight)
-          print("Height \(feature.topLeft.y - feature.bottomLeft.y)")
-          print("Width \(feature.topRight.x - feature.topLeft.x)")
-        })
+        self.currentFilteredImage = self.drawHighlightOverlayForPoints(image, topLeft: feature.topLeft, topRight: feature.topRight,
+                bottomLeft: feature.bottomLeft, bottomRight: feature.bottomRight)
+        print("Height \(feature.topLeft.y - feature.bottomLeft.y)")
+        print("Width \(feature.topRight.x - feature.topLeft.x)")
       }
     }
   }
