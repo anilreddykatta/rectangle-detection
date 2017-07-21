@@ -21,15 +21,22 @@ class ViewController: UIViewController {
   var detector: CIDetector?
   var currentFilteredImage: CIImage?
   
+    @IBOutlet weak var imgView: UIImageView!
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
     
-    // Create the video filter
-    videoFilter = CoreImageVideoFilter(superview: view, applyFilterCallback: nil)
+//    // Create the video filter
+//    videoFilter = CoreImageVideoFilter(superview: view, applyFilterCallback: nil)
+//    
+//    // Simulate a tap on the mode selector to start the process
+//    handleDetectorSelectionChange(0)
     
-    // Simulate a tap on the mode selector to start the process
-    handleDetectorSelectionChange(0)
+    //following is the Static Image Detection Code
+    detector = prepareRectangleDetector()
+    let uiImage = self.imgView.image
+    let ciImage = CIImage.init(image: uiImage!)
+    performRectangleDetection(ciImage!)
   }
   
   func handleDetectorSelectionChange(_ selectedIndex: Int) {
@@ -56,18 +63,29 @@ class ViewController: UIViewController {
     if let detector = detector {
       // Get the detections
       let features = detector.features(in: image)
+        print("printing the count \(features.count)")
       for feature in features as! [CIRectangleFeature] {
         self.currentFilteredImage = self.drawHighlightOverlayForPoints(image, topLeft: feature.topLeft, topRight: feature.topRight,
                 bottomLeft: feature.bottomLeft, bottomRight: feature.bottomRight)
+        print("topLeft.y \(feature.topLeft.y)")
+        print("bottomLeft.y \(feature.bottomLeft.y)")
+        print("topLeft.x \(feature.topLeft.x)")
+        print("topRight.x \(feature.topRight.x)")
         print("Height \(feature.topLeft.y - feature.bottomLeft.y)")
         print("Width \(feature.topRight.x - feature.topLeft.x)")
       }
     }
   }
-  
+   
   func prepareRectangleDetector() -> CIDetector {
-    let options: [String: Any] = [CIDetectorAccuracy: CIDetectorAccuracyHigh, CIDetectorAspectRatio: 1.0]
-    return CIDetector(ofType: CIDetectorTypeRectangle, context: nil, options: options)!
+    if #available(iOS 10.0, *) {
+        let options: [String: Any] = [CIDetectorAccuracy: CIDetectorAccuracyLow, CIDetectorAspectRatio: 1, CIDetectorMaxFeatureCount: 3]
+        return CIDetector(ofType: CIDetectorTypeRectangle, context: nil, options: options)!
+    } else {
+        let options: [String: Any] = [CIDetectorAccuracy: CIDetectorAccuracyLow, CIDetectorAspectRatio: 1]
+        return CIDetector(ofType: CIDetectorTypeRectangle, context: nil, options: options)!
+    }
+    
   }
   
   func drawHighlightOverlayForPoints(_ image: CIImage, topLeft: CGPoint, topRight: CGPoint,
@@ -82,7 +100,11 @@ class ViewController: UIViewController {
         "inputBottomLeft": CIVector(cgPoint: bottomLeft),
         "inputBottomRight": CIVector(cgPoint: bottomRight)
       ])
-    return overlay.compositingOverImage(image)
+    let frontCiImage = overlay.compositingOverImage(image)
+    let frontImg = UIImage.init(ciImage: frontCiImage)
+    let frontImgView  = UIImageView.init(image: frontImg)
+    self.imgView.addSubview(frontImgView)
+    return frontCiImage //overlay.compositingOverImage(image)
   }
 }
 

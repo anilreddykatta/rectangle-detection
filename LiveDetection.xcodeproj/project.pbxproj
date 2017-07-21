@@ -164,7 +164,7 @@
 				TargetAttributes = {
 					F4ACDCF6198904F5005DF147 = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = BB3NP356J9;
+						DevelopmentTeam = R2T6882S95;
 						LastSwiftMigration = 0820;
 					};
 					F4ACDD08198904F6005DF147 = {
@@ -353,7 +353,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = BB3NP356J9;
+				DEVELOPMENT_TEAM = R2T6882S95;
 				INFOPLIST_FILE = LiveDetection/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.thinkclear.camera-detect";
@@ -367,7 +367,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = BB3NP356J9;
+				DEVELOPMENT_TEAM = R2T6882S95;
 				INFOPLIST_FILE = LiveDetection/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.thinkclear.camera-detect";
